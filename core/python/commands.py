@@ -106,6 +106,14 @@ class CloudGoat:
                 else:
                     print(f'Using default profile "{profile}" from config.yml...')
 
+        # Username for multi-user system
+        #
+        
+        user = ""
+                    
+        if (len(command) > 2):
+            user = command[2]
+                    
         # Execution
         if command[0] == "config":
             if command[1] == "whitelist" or command[1] == "whitelist.txt":
@@ -118,13 +126,13 @@ class CloudGoat:
                 return self.configure_argcomplete()
 
         elif command[0] == "create":
-            return self.create_scenario(command[1], profile)
+            return self.create_scenario(command[1], profile, user)
 
         elif command[0] == "destroy":
             if command[1] == "all":
                 return self.destroy_all_scenarios(profile)
             else:
-                return self.destroy_scenario(command[1], profile)
+                return self.destroy_scenario(command[1], profile, username=user)
 
         elif command[0] == "list":
             if command[1] == "all":
@@ -315,7 +323,11 @@ class CloudGoat:
                     print(f"Whitelisted IP addresses:\n    " + "\n    ".join(whitelist))
             return whitelist
 
-    def create_scenario(self, scenario_name_or_path, profile):
+    def create_scenario(self, scenario_name_or_path, profile, username = ""):
+        if username:
+            print ("!Multi-user system enabled!")
+            print ("User: " + username)
+            
         scenario_name = normalize_scenario_name(scenario_name_or_path)
         scenario_dir = os.path.join(self.scenarios_dir, scenario_name)
 
@@ -361,8 +373,8 @@ class CloudGoat:
                 instance_name = os.path.basename(extant_dir)
                 print(f"\nCancelled destruction and recreation of {instance_name}.\n")
                 return
-
-        cgid = generate_cgid()
+        
+        cgid = generate_cgid(username)
         scenario_instance_dir_path = os.path.join(
             self.base_dir, f"{scenario_name}_{cgid}"
         )
@@ -564,11 +576,14 @@ class CloudGoat:
 
         return
 
-    def destroy_scenario(self, scenario_name_or_path, profile, confirmed=False):
+    def destroy_scenario(self, scenario_name_or_path, profile, confirmed=False, username = ""):
+        if username:
+            print ("!Multi-user system enabled!")
+            print ("User: " + username)
         # Information gathering.
         scenario_name = normalize_scenario_name(scenario_name_or_path)
         scenario_instance_dir_path = find_scenario_instance_dir(
-            self.base_dir, scenario_name
+            self.base_dir, scenario_name, username
         )
 
         if scenario_instance_dir_path is None:
