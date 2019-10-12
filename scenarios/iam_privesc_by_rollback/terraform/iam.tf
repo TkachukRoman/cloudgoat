@@ -1,6 +1,6 @@
 #IAM Users
 resource "aws_iam_user" "cg-raynor" {
-  name = "raynor"
+  name = "raynor-${var.cgid}"
   tags = {
     Name = "cg-raynor-${var.cgid}"
     Stack = "${var.stack-name}"
@@ -12,7 +12,7 @@ resource "aws_iam_access_key" "cg-raynor" {
 }
 #IAM User Policies
 resource "aws_iam_policy" "cg-raynor-policy" {
-  name = "cg-raynor-policy"
+  name = "cg-raynor-policy-${var.cgid}"
   description = "cg-raynor-policy"
   policy = "${file("../assets/policies/v1.json")}"
 }

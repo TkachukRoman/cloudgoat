@@ -9,7 +9,6 @@ import yaml
 
 from core.python.python_terraform import VariableFiles, Terraform
 
-
 class PatchedVariableFiles(VariableFiles):
     def create(self, variables):
         with tempfile.NamedTemporaryFile(
@@ -110,20 +109,27 @@ def find_scenario_dir(scenarios_dir, dir_name):
     return None
 
 
-def find_scenario_instance_dir(base_dir, scenario_name):
+def find_scenario_instance_dir(base_dir, scenario_name, username = ""):
     for dir_path in dirs_at_location(base_dir):
         dir_match = re.findall(
             r"(.*)\_cgid(?:[a-z0-9]){10}$", os.path.basename(dir_path)
         )
+        if username:
+            dir_match = re.findall(
+                r"(.*)\_" + username + "$", os.path.basename(dir_path)
+            )
         if dir_match and dir_match[0] == scenario_name:
             return dir_path
     return None
 
 
-def generate_cgid():
-    return "cgid" + "".join(
-        random.choice(string.ascii_lowercase + string.digits) for x in range(10)
-    )
+def generate_cgid(username = ""):
+    if username is not "":
+        return username
+    else:
+        return "cgid" + "".join(
+            random.choice(string.ascii_lowercase + string.digits) for x in range(10)
+        )
 
 
 def ip_address_or_range_is_valid(text):
