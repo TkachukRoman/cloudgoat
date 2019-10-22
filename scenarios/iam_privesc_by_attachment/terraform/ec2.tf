@@ -59,6 +59,8 @@ resource "aws_instance" "cg-super-critical-security-server" {
   instance_type = "t2.micro"
   subnet_id = "${aws_subnet.cg-public-subnet.id}"
   associate_public_ip_address = true
+  disable_api_termination = true
+  user_data = file("${path.module}/userdata.tpl")
   vpc_security_group_ids = [
       "${aws_security_group.cg-ec2-ssh-security-group.id}",
       "${aws_security_group.cg-ec2-http-https-security-group.id}"
@@ -77,5 +79,6 @@ resource "aws_instance" "cg-super-critical-security-server" {
       Name = "CloudGoat ${var.cgid} super-critical-security-server EC2 Instance"
       Stack = "${var.stack-name}"
       Scenario = "${var.scenario-name}"
+      Owner =  "Seclab102019"
   }
 }
