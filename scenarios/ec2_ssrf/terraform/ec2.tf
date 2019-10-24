@@ -157,5 +157,6 @@ resource "aws_instance" "cg-ubuntu-ec2" {
         Name = "cg-ubuntu-ec2-${var.cgid}"
         Stack = "${var.stack-name}"
         Scenario = "${var.scenario-name}"
+        Owner =  "Seclab102019"
     }
 }
